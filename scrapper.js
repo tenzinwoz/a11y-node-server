@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const { AxePuppeteer } = require("@axe-core/puppeteer");
 require("dotenv").config();
 
 const scanPage = async (url) => {
@@ -14,17 +15,18 @@ const scanPage = async (url) => {
         ? process.env.PUPPETEER_EXECUTABLE_PATH
         : puppeteer.executablePath(),
   });
+
   try {
     const page = await browser.newPage();
 
     await page.goto(url);
 
-    const fullTitle = await page.title();
+    const axeResult = await new AxePuppeteer(page).analyze();
 
-    return fullTitle;
+    return axeResult;
   } catch (error) {
     await browser.close();
-    throw new Error(error.message);
+    throw new Error(error);
   } finally {
     await browser.close();
   }
