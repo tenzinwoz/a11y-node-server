@@ -1,6 +1,10 @@
 const express = require("express");
 const { scanPage } = require("./scrapper");
+const { connectToDb } = require("./db");
+
 const app = express();
+
+connectToDb();
 
 app.use(express.json());
 
