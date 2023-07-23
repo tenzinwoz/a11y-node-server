@@ -1,25 +1,13 @@
 const express = require("express");
-const { scanPage } = require("./scrapper");
 const { connectToDb } = require("./db");
+const appRoutes = require("./routes");
 
 const app = express();
 
-connectToDb();
-
 app.use(express.json());
 
-app.post("/api/a11y", async (req, res) => {
-  try {
-    const { url } = req.body;
-    if (!url) {
-      res.status(400).send("No Application/Website URL Provided!");
-    }
-    const response = await scanPage(url);
-    res.send(response);
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send(error.message);
-  }
+connectToDb().then(() => {
+  app.use("/api", appRoutes);
 });
 
 const PORT = process.env.PORT || 5050;
