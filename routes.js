@@ -3,6 +3,7 @@ const { getDb } = require("./db");
 const router = express.Router();
 
 const { scanPage } = require("./scrapper");
+const { ObjectId } = require("mongodb");
 
 router.post("/a11y", async (req, res) => {
   const db = getDb();
@@ -19,6 +20,31 @@ router.post("/a11y", async (req, res) => {
     });
 
     res.send(saveRes);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+router.get("/a11y", async (req, res) => {
+  const db = getDb();
+  try {
+    const response = await db.collection("results").find().toArray();
+    res.send(response);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+router.get("/a11y/:id", async (req, res) => {
+  const db = getDb();
+  try {
+    console.log(req.params.id);
+    const response = await db
+      .collection("results")
+      .findOne({ _id: new ObjectId(req.params.id) });
+
+    console.log({ response });
+    res.send(response);
   } catch (error) {
     res.status(500).send(error.message);
   }
